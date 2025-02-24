@@ -35,6 +35,11 @@ jobs:
         name: "finwave_pipeline_${{ matrix.os }}"
         path: dist/*
 
+    # Store the artifact path to pass it to the release job
+    - name: Set artifact path
+      id: set_artifact_path
+      run: echo "::set-output name=artifact_path::./dist/${{ matrix.os }}/finwave_pipeline"
+
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -61,7 +66,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/${{ matrix.os }}/finwave_pipeline  # Path to the built executable
-        asset_name: "finwave_pipeline_${{ matrix.os }}"  # The name of the artifact
+        asset_path: ${{ needs.build.outputs.artifact_path }}  # Referencing the stored artifact path
+        asset_name: finwave_pipeline_${{ matrix.os }}  # The name of the artifact
         asset_content_type: application/octet-stream
         token: ${{ secrets.GITHUB_TOKEN }}
