@@ -16,12 +16,12 @@ jobs:
         os: [ubuntu-20.04, windows-latest, macos-latest]  # Platforms to build for
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.10
+          python-version: 3.10.0
 
       - name: Install dependencies
         run: |
