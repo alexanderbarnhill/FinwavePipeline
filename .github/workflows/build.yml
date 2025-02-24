@@ -31,7 +31,7 @@ jobs:
     - name: Ensure dist directory exists and zip the executable
       run: |
         mkdir -p dist/${{ matrix.os }}  # Create the dist directory for each OS
-        cp dist/finwave_pipeline dist/${{ matrix.os }}/  # Copy the executable to the corresponding OS folder
+        cp -r dist/finwave_pipeline dist/${{ matrix.os }}/  # Copy the executable to the corresponding OS folder
         cd dist/${{ matrix.os }}
         zip finwave_pipeline_${{ matrix.os }}.zip finwave_pipeline  # Zip the executable
 
