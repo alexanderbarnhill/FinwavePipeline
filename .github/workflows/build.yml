@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Executable for ${{ matrix.os }}
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+          if [ ${{ matrix.os }} == 'ubuntu-20.04' ]; then
             echo "Building for Linux"
             pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux main.py
           elif [ ${{ matrix.os }} == 'windows-latest' ]; then
@@ -49,39 +49,25 @@ jobs:
             pyinstaller --onefile --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos main.py
           fi
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: executable-${{ matrix.os }}
-          path: ./dist/${{ matrix.os }}/*
-
-  # Optional: If you want to upload all the executables for different OS platforms separately
-  upload-linux:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Upload Linux Executable
+      - name: Upload Linux Artifact
+        if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: linux-executable
-          path: ./dist/linux/*
+          path: ./dist/linux/main  # Adjust with actual executable name
 
-  upload-windows:
-    runs-on: windows-latest
-    needs: build
-    steps:
-      - name: Upload Windows Executable
+      - name: Upload Windows Artifact
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: windows-executable
-          path: ./dist/windows/*
+          path: ./dist/windows/main.exe  # Adjust with actual executable name
 
-  upload-macos:
-    runs-on: macos-latest
-    needs: build
-    steps:
-      - name: Upload macOS Executable
+      - name: Upload macOS Artifact
+        if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: macos-executable
-          path: ./dist/macos/*
+          path: ./dist/macos/main  # Adjust with actual executable name
+
+  # Optional: If you want to upload all the executables for different OS platforms separately
