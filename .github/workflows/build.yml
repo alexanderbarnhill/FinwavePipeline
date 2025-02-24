@@ -48,10 +48,15 @@ jobs:
             pyinstaller --onefile --clean --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos finwave_pipeline.py
           fi
 
+      - name: Check PyInstaller Output
+        run: |
+          echo "Checking PyInstaller build logs for ${{ matrix.os }}"
+          cat ./build/${{ matrix.os }}/finwave_pipeline.spec
+
       - name: Verify Build Output for ${{ matrix.os }}
         run: |
           echo "Contents of dist directory:"
-          ls ./dist/${{ matrix.os }}
+          ls -l ./dist/${{ matrix.os }}  # List files for debugging
 
       - name: Upload Linux Artifact
         if: runner.os == 'Linux'
