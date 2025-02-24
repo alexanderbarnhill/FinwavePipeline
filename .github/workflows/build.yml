@@ -42,5 +42,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: executables-${{ github.run_id }}  # Use run_id to make it unique
+        name: executables-${{ matrix.os }}-${{ github.run_id }}  # Include OS and run_id for uniqueness
         path: dist/
