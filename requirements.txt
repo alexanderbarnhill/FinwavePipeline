@@ -1,3 +1,2 @@
-python3-tk
 requests
 Pillow==10.2.0
