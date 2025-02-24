@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.6
+          python-version: 3.8
 
       - name: Install python3-tk (Ubuntu)
         if: runner.os == 'Linux'
@@ -60,22 +60,22 @@ jobs:
           ls -l ./dist/${{ matrix.os }}  # List files for debugging
 
       - name: Upload Linux Artifact
-        if: runner.os == 'Linux'
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-executable
           path: ./dist/linux/finwave_pipeline  # Adjust with actual executable name
 
       - name: Upload Windows Artifact
-        if: runner.os == 'Windows'
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: windows-executable
           path: ./dist/windows/finwave_pipeline.exe  # Adjust with actual executable name
 
       - name: Upload macOS Artifact
-        if: runner.os == 'macOS'
+        if: matrix.os == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
           name: macos-executable
-          path: ./dist/macos/finwave_pipeline  # Adjust with actual executable name
+          path: ./dist/macos/finwave_pipeline
