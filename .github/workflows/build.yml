@@ -1,81 +1,26 @@
-name: Build Executables for Different Platforms
+
+name: Package Application with Pyinstaller
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]  # Platforms to build for
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.8
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-windows@main
+      with:
+        path: src
 
-      - name: Install python3-tk (Ubuntu)
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y python3-tk
-
-      - name: Install python3-tk (macOS)
-        if: runner.os == 'macOS'
-        run: brew install python-tk
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller  # Ensure pyinstaller is installed
-
-      - name: Build Executable for ${{ matrix.os }}
-        run: |
-          echo "Building for ${{ matrix.os }}"
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            pyinstaller --onefile --clean --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux finwave_pipeline.py
-          elif [ ${{ matrix.os }} == 'windows-latest' ]; then
-            pyinstaller --onefile --clean --distpath ./dist/windows --workpath ./build/windows --specpath ./spec/windows finwave_pipeline.py
-          elif [ ${{ matrix.os }} == 'macos-latest' ]; then
-            pyinstaller --onefile --clean --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos finwave_pipeline.py
-          fi
-
-      - name: Capture PyInstaller Output for ${{ matrix.os }}
-        run: |
-          echo "Capturing PyInstaller logs for ${{ matrix.os }}"
-          pyinstaller --onefile --clean --distpath ./dist/${{ matrix.os }} --workpath ./build/${{ matrix.os }} --specpath ./spec/${{ matrix.os }} finwave_pipeline.py > pyinstaller-${{ matrix.os }}.log 2>&1
-          cat pyinstaller-${{ matrix.os }}.log  # Output PyInstaller logs
-
-      - name: Verify Build Output for ${{ matrix.os }}
-        run: |
-          echo "Contents of dist directory:"
-          ls -l ./dist/${{ matrix.os }}  # List files for debugging
-
-      - name: Upload Linux Artifact
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-executable
-          path: ./dist/linux/finwave_pipeline  # Adjust with actual executable name
-
-      - name: Upload Windows Artifact
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-executable
-          path: ./dist/windows/finwave_pipeline # Adjust with actual executable name
-
-      - name: Upload macOS Artifact
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-executable
-          path: ./dist/macos/finwave_pipeline
+    - uses: actions/upload-artifact@v4
+      with:
+        name: finwave_pipeline.exe
+        path: src/dist/windows
