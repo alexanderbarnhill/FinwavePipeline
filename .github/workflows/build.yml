@@ -1,9 +1,5 @@
-name: Build Executables for Different Platforms
-
 on:
   push:
-    tags:
-      - 'v*'  # This ensures the workflow is triggered when you push a tag like v1.0.0
 
 jobs:
   build:
@@ -14,99 +10,15 @@ jobs:
         os: ['windows-latest', 'macos-latest', 'ubuntu-latest']
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: 3.8
 
-    - name: Install dependencies
-      run: pip install -r src/requirements.txt
-
-    - name: Build Executable
-      run: pyinstaller src/finwave_pipeline.py
-
-    - name: Ensure dist directory exists and zip the executable
-      run: |
-        mkdir -p dist/${{ matrix.os }}  # Create the dist directory for each OS
-        cp -r dist/finwave_pipeline dist/${{ matrix.os }}/  # Copy the executable to the corresponding OS folder
-        cd dist/${{ matrix.os }}
-        zip finwave_pipeline_${{ matrix.os }}.zip finwave_pipeline  # Zip the executable
-
-    - name: Upload Executable Artifact
-      id: upload_artifact
-      uses: actions/upload-artifact@v4
+    - run: pip install -r src/requirements.txt
+    - run: pyinstaller src/finwave_pipeline.py
+    # Optionally verify that it works (provided that it does not need user interaction)
+    - uses: actions/upload-artifact@v4
       with:
-        name: "finwave_pipeline_${{ matrix.os }}"
-        path: dist/${{ matrix.os }}/*.zip  # Upload the ZIP file
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Create Release with Dynamic Tag
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}  # Dynamically get the tag that triggered the workflow
-        release_name: Release ${{ github.ref }}
-        body: "Release of the build artifacts for version ${{ github.ref }}."
-        draft: false
-        prerelease: false
-
-    # Download artifacts for all matrix OSes using download-artifact@v4
-    - name: Download Artifact for Ubuntu
-      uses: actions/download-artifact@v4
-      with:
-        name: finwave_pipeline_ubuntu-latest
-        path: ./dist/ubuntu-latest
-
-    - name: Download Artifact for macOS
-      uses: actions/download-artifact@v4
-      with:
-        name: finwave_pipeline_macos-latest
-        path: ./dist/macos-latest
-
-    - name: Download Artifact for Windows
-      uses: actions/download-artifact@v4
-      with:
-        name: finwave_pipeline_windows-latest
-        path: ./dist/windows-latest
-
-    # Upload each artifact to the release
-    - name: Upload Ubuntu ZIP to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/ubuntu-latest/finwave_pipeline_ubuntu-latest.zip  # Path to the .zip file
-        asset_name: finwave_pipeline_ubuntu-latest.zip  # The name of the artifact
-        asset_content_type: application/zip
-
-    - name: Upload macOS ZIP to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/macos-latest/finwave_pipeline_macos-latest.zip  # Path to the .zip file
-        asset_name: finwave_pipeline_macos-latest.zip  # The name of the artifact
-        asset_content_type: application/zip
-
-    - name: Upload Windows ZIP to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/windows-latest/finwave_pipeline_windows-latest.zip  # Path to the .zip file
-        asset_name: finwave_pipeline_windows-latest.zip  # The name of the artifact
-        asset_content_type: application/zip
+        name: "finwave_pipeline_${{matrix.os}}"
+        path: dist/*
