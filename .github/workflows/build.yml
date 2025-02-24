@@ -56,19 +56,19 @@ jobs:
 
     # Download artifacts for all matrix OSes
     - name: Download Artifact for Ubuntu
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: finwave_pipeline_ubuntu-latest
         path: ./dist/ubuntu-latest
 
     - name: Download Artifact for macOS
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: finwave_pipeline_macos-latest
         path: ./dist/macos-latest
 
     - name: Download Artifact for Windows
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: finwave_pipeline_windows-latest
         path: ./dist/windows-latest
