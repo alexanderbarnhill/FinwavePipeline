@@ -28,12 +28,18 @@ jobs:
     - name: Build Executable
       run: pyinstaller src/finwave_pipeline.py
 
+    - name: Zip the Executable
+      run: |
+        # Ensure we're in the dist folder and zip the executable for each platform
+        cd dist/${{ matrix.os }}
+        zip finwave_pipeline_${{ matrix.os }}.zip finwave_pipeline
+
     - name: Upload Executable Artifact
       id: upload_artifact
       uses: actions/upload-artifact@v4
       with:
         name: "finwave_pipeline_${{ matrix.os }}"
-        path: dist/*
+        path: dist/${{ matrix.os }}/*.zip  # Upload the ZIP file
 
   release:
     needs: build
@@ -54,7 +60,7 @@ jobs:
         draft: false
         prerelease: false
 
-    # Download artifacts for all matrix OSes
+    # Download artifacts for all matrix OSes using download-artifact@v4
     - name: Download Artifact for Ubuntu
       uses: actions/download-artifact@v4
       with:
@@ -74,32 +80,8 @@ jobs:
         path: ./dist/windows-latest
 
     # Upload each artifact to the release
-    - name: Upload Ubuntu Artifact to Release
+    - name: Upload Ubuntu ZIP to Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/ubuntu-latest/finwave_pipeline  # Path to the Ubuntu artifact
-        asset_name: finwave_pipeline_ubuntu-latest  # The name of the Ubuntu artifact
-        asset_content_type: application/octet-stream
 
-    - name: Upload macOS Artifact to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/macos-latest/finwave_pipeline  # Path to the macOS artifact
-        asset_name: finwave_pipeline_macos-latest  # The name of the macOS artifact
-        asset_content_type: application/octet-stream
-
-    - name: Upload Windows Artifact to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/windows-latest/finwave_pipeline  # Path to the Windows artifact
-        asset_name: finwave_pipeline_windows-latest  # The name of the Windows artifact
-        asset_content_type: application/octet-stream
