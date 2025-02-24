@@ -29,9 +29,10 @@ jobs:
       run: pyinstaller src/finwave_pipeline.py
 
     - name: Upload Executable Artifact
+      id: upload_artifact
       uses: actions/upload-artifact@v4
       with:
-        name: "finwave_pipeline_${{matrix.os}}"
+        name: "finwave_pipeline_${{ matrix.os }}"
         path: dist/*
 
   release:
@@ -52,6 +53,7 @@ jobs:
         body: "Release of the build artifacts for version ${{ github.ref }}."
         draft: false
         prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Artifacts to Release
       uses: actions/upload-release-asset@v1
@@ -62,3 +64,4 @@ jobs:
         asset_path: ./dist/${{ matrix.os }}/finwave_pipeline  # Path to the built executable
         asset_name: "finwave_pipeline_${{ matrix.os }}"  # The name of the artifact
         asset_content_type: application/octet-stream
+        token: ${{ secrets.GITHUB_TOKEN }}
