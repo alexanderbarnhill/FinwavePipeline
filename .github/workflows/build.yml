@@ -42,5 +42,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: executables
+        name: executables-${{ github.run_id }}  # Use run_id to make it unique
         path: dist/
