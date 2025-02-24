@@ -32,13 +32,13 @@ jobs:
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-20.04' ]; then
             echo "Building for Linux"
-            pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux your_script.py
+            pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux main.py
           elif [ ${{ matrix.os }} == 'windows-latest' ]; then
             echo "Building for Windows"
-            pyinstaller --onefile --distpath ./dist/windows --workpath ./build/windows --specpath ./spec/windows your_script.py
+            pyinstaller --onefile --distpath ./dist/windows --workpath ./build/windows --specpath ./spec/windows main.py
           elif [ ${{ matrix.os }} == 'macos-latest' ]; then
             echo "Building for macOS"
-            pyinstaller --onefile --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos your_script.py
+            pyinstaller --onefile --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos main.py
           fi
 
       - name: Upload artifacts
