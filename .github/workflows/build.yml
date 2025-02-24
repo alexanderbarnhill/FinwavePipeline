@@ -40,13 +40,13 @@ jobs:
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-20.04' ]; then
             echo "Building for Linux"
-            pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux main.py
+            pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux finwave_pipeline.py
           elif [ ${{ matrix.os }} == 'windows-latest' ]; then
             echo "Building for Windows"
-            pyinstaller --onefile --distpath ./dist/windows --workpath ./build/windows --specpath ./spec/windows main.py
+            pyinstaller --onefile --distpath ./dist/windows --workpath ./build/windows --specpath ./spec/windows finwave_pipeline.py
           elif [ ${{ matrix.os }} == 'macos-latest' ]; then
             echo "Building for macOS"
-            pyinstaller --onefile --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos main.py
+            pyinstaller --onefile --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos finwave_pipeline.py
           fi
 
       - name: Upload Linux Artifact
@@ -54,20 +54,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-executable
-          path: ./dist/linux/main  # Adjust with actual executable name
+          path: ./dist/linux/finwave_pipeline  # Adjust with actual executable name
 
       - name: Upload Windows Artifact
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: windows-executable
-          path: ./dist/windows/main.exe  # Adjust with actual executable name
+          path: ./dist/windows/finwave_pipeline.exe  # Adjust with actual executable name
 
       - name: Upload macOS Artifact
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: macos-executable
-          path: ./dist/macos/main  # Adjust with actual executable name
+          path: ./dist/macos/finwave_pipeline  # Adjust with actual executable name
 
   # Optional: If you want to upload all the executables for different OS platforms separately
