@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]  # Platforms to build for
+        os: [ubuntu-22.04, windows-latest, macos-latest]  # Platforms to build for
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Executable for ${{ matrix.os }}
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-20.04' ]; then
+          if [ ${{ matrix.os }} == 'ubuntu-22.04' ]; then
             echo "Building for Linux"
             pyinstaller --onefile --distpath ./dist/linux --workpath ./build/linux --specpath ./spec/linux main.py
           elif [ ${{ matrix.os }} == 'windows-latest' ]; then
