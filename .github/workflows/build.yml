@@ -48,10 +48,11 @@ jobs:
             pyinstaller --onefile --clean --distpath ./dist/macos --workpath ./build/macos --specpath ./spec/macos finwave_pipeline.py
           fi
 
-      - name: Check PyInstaller Output
+      - name: Capture PyInstaller Output for ${{ matrix.os }}
         run: |
-          echo "Checking PyInstaller build logs for ${{ matrix.os }}"
-          cat ./build/${{ matrix.os }}/finwave_pipeline.spec
+          echo "Capturing PyInstaller logs for ${{ matrix.os }}"
+          pyinstaller --onefile --clean --distpath ./dist/${{ matrix.os }} --workpath ./build/${{ matrix.os }} --specpath ./spec/${{ matrix.os }} finwave_pipeline.py > pyinstaller-${{ matrix.os }}.log 2>&1
+          cat pyinstaller-${{ matrix.os }}.log  # Output PyInstaller logs
 
       - name: Verify Build Output for ${{ matrix.os }}
         run: |
