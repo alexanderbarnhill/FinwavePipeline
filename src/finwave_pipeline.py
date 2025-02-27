@@ -120,6 +120,8 @@ class FinwaveGUI:
                 if response.status_code == 200:
                     content = json.loads(response.text)
                     detections = content["response"]["extractedImages"]
+                    if len(detections) == 0:
+                        logger.info(f"No fins detected in {image_path}")
                     output = ARGS.output_directory
                     if output is None:
                         output = os.path.join(ARGS.input_directory, "CROPPED")
@@ -191,6 +193,7 @@ def get_images(directory):
     images = []
     for extension in extension_list:
         images.extend(glob.glob(directory + '/**/*.' + extension, recursive=True))
+    images = sorted(list(set(images)))
     return images
 
 
